@@ -1,0 +1,10 @@
+[
+  {
+    "repo": "avniijain/demo-repo",
+    "workflow": "security.yml",
+    "container_app": "ca-cloudguard-demo",
+    "resource_group": "rg-cloudguard-demo",
+    "image_repository": "demo-repo",
+    "rollback_workflow": "rollback.yml"
+  }
+]

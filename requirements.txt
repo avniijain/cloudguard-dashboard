@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+httpx
+azure-identity
+azure-mgmt-appcontainers

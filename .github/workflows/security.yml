@@ -1,0 +1,49 @@
+name: security
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  cloudguard:
+    uses: avniijain/cloudguard/.github/workflows/cloudguard.yml@v1.1
+    with:
+      image-name: cloudguard-dashboard
+      risk-gate-mode: ${{ vars.RISK_GATE_MODE || 'enforce' }}
+      sonar-organization: ${{ vars.SONAR_ORGANIZATION }}
+      test-install-command: "pip install -r requirements-dev.txt"
+      test-command: python -m pytest -v --cov=app --cov-report=xml --cov-report=term
+      export-image: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+  publish-deploy:
+    needs: cloudguard
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: avniijain/cloudguard/.github/workflows/cloudguard-publish.yml@v1.1
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      publish: true
+      deploy: ${{ vars.ENABLE_DEPLOY == 'true' }}
+      decision: ${{ needs.cloudguard.outputs.decision }}
+      risk-gate-mode: ${{ needs.cloudguard.outputs.risk-gate-mode }}
+      image-tag: ${{ needs.cloudguard.outputs.image-tag }}
+      image-id: ${{ needs.cloudguard.outputs.image-id }}
+      image-artifact: ${{ needs.cloudguard.outputs.image-artifact }}
+      registry: ${{ vars.ACR_LOGIN_SERVER }}
+      image-repository: cloudguard-dashboard
+      environment: production
+      azure-client-id: ${{ vars.AZURE_CLIENT_ID }}
+      azure-tenant-id: ${{ vars.AZURE_TENANT_ID }}
+      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+      container-app: ${{ vars.AZURE_CONTAINER_APP }}
+      health-path: /api/health
+      env-vars: "AZURE_SUBSCRIPTION_ID=${{ vars.AZURE_SUBSCRIPTION_ID }} GITHUB_TOKEN=secretref:github-token"

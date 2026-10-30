@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CloudGuard Dashboard</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <h1>CloudGuard Dashboard</h1>
+      <div class="controls">
+        <label class="control">
+          Repository
+          <select id="repo-select"></select>
+        </label>
+        <label class="control">
+          Limit
+          <select id="limit-select">
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+          </select>
+        </label>
+        <button type="button" id="refresh-btn">Refresh</button>
+      </div>
+    </header>
+    <div id="banner" class="banner" role="alert" hidden></div>
+    <main id="main">
+      <p id="status" class="status" aria-live="polite"></p>
+      <section class="summary" aria-label="Repository summary">
+        <article class="card">
+          <h2>Latest decision (main)</h2>
+          <p id="summary-decision" class="card-value">—</p>
+        </article>
+        <article class="card">
+          <h2>Decisions in view</h2>
+          <p id="summary-counts" class="card-value">—</p>
+        </article>
+        <article class="card">
+          <h2>Latest risk score</h2>
+          <p id="summary-score" class="card-value">—</p>
+        </article>
+      </section>
+      <section aria-label="Workflow runs">
+        <div class="table-wrap">
+          <table class="runs-table">
+            <caption>
+              Recent workflow runs for the selected repository
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Branch</th>
+                <th scope="col">Event</th>
+                <th scope="col">SHA</th>
+                <th scope="col">Conclusion</th>
+                <th scope="col">Decision</th>
+                <th scope="col">Risk</th>
+                <th scope="col">Severity C/H/M/L</th>
+                <th scope="col">Run</th>
+              </tr>
+            </thead>
+            <tbody id="runs-body"></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="deployments-section" aria-labelledby="deployments-heading">
+        <h2 id="deployments-heading">Deployments</h2>
+        <p id="deployments-status" class="status" role="status" aria-live="polite"></p>
+        <div id="deployments-error" class="banner deployment-error" role="alert" hidden></div>
+        <div class="table-wrap">
+          <table class="deployments-table">
+            <caption>Container App revisions</caption>
+            <thead>
+              <tr>
+                <th scope="col">Live</th>
+                <th scope="col">Revision</th>
+                <th scope="col">Created</th>
+                <th scope="col">Active</th>
+                <th scope="col">Traffic</th>
+                <th scope="col">Health</th>
+                <th scope="col">Commit</th>
+                <th scope="col">Image digest</th>
+                <th scope="col">Scan decision</th>
+              </tr>
+            </thead>
+            <tbody id="deployments-body"></tbody>
+          </table>
+        </div>
+        <div class="table-wrap rollback-wrap">
+          <table class="deployments-table">
+            <caption>Recent rollbacks</caption>
+            <thead>
+              <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Actor</th>
+                <th scope="col">Conclusion</th>
+                <th scope="col">Run</th>
+              </tr>
+            </thead>
+            <tbody id="rollbacks-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
